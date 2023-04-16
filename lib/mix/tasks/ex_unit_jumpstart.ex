@@ -164,37 +164,17 @@ defmodule Mix.Tasks.ExUnitJumpstart.Generate do
   def run(args) do
     cfg = Mix.Tasks.ExUnitJumpstart.parse_args(args)
 
-    files =
-      cfg[:copy_files] ++
-        []
+    code_files = ExUnitJumpstart.GetCodeFiles.retrieve_code_files(cfg)
+    test_files = ExUnitJumpstart.GetTestFiles.retrieve_test_files(cfg)
 
-    files =
-      for file <- files, file[:enabled] != false do
-        %{
-          file
-          | src: Mix.Tasks.ExUnitJumpstart.expand_vars(file.src, cfg),
-            dst: Mix.Tasks.ExUnitJumpstart.expand_vars(file.dst, cfg)
-        }
-      end
+    ExUnitJumpstart.CreateDirs.create_test_dirs(cfg, code_files)
+    ExUnitJumpstart.MoveFiles.move_misplaced_test_files(cfg, code_files, test_files)
+    ExUnitJumpstart.CreateFiles.create_missing_test_files(cfg, code_files, test_files)
 
-    dirs =
-      for dir <- dirs, dir[:enabled] != false do
-        %{dir | path: Mix.Tasks.ExUnitJumpstart.expand_vars(dir.path, cfg)}
-      end
+    # refetch test files after moving and creating
+    test_files = ExUnitJumpstart.GetTestFiles.retrieve_test_files(cfg)
 
-    vars = Keyword.merge(cfg, create_dirs: dirs, copy_files: files)
-
-    for template <- cfg[:templates], do: write_template(vars, cfg[:bin_dir], template)
-
-    if cfg[:sudo_ExUnitJumpstart] or cfg[:sudo_app] do
-      # Give ExUnitJumpstart and/or app user ability to run start/stop commands via sudo
-      write_template(
-        cfg,
-        Path.join(cfg[:output_dir], "/etc/sudoers.d"),
-        "sudoers",
-        cfg[:ext_name]
-      )
-    end
+    ExUnitJumpstart.UnitTestGenerator.create_unit_tests(cfg, code_files, test_files)
   end
 
   defp write_template(cfg, dest_dir, template),
