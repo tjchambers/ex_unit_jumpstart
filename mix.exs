@@ -1,7 +1,7 @@
 defmodule ExUnitJumpstart.MixProject do
   use Mix.Project
 
-  @github "https://github.com/SchellingPoint/ex_unit_jumpstart"
+  @github "https://github.com/tjchambers/ex_unit_jumpstart"
   @version "0.0.1"
 
   def project do
@@ -9,8 +9,6 @@ defmodule ExUnitJumpstart.MixProject do
       app: :ex_unit_jumpstart,
       version: @version,
       elixir: "~> 1.14",
-      build_embedded: Mix.env() == :prod,
-      start_permanent: Mix.env() == :prod,
       package: package(),
       source_url: @github,
       homepage_url: @github,

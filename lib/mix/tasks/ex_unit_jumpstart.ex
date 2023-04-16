@@ -1,11 +1,10 @@
 defmodule Mix.Tasks.ExUnitJumpstart do
   @moduledoc false
 
-  # Directory where `mix ExUnitJumpstart.generate` stores output files,
-  # e.g. _build/prod/ExUnitJumpstart
-  @output_dir "ExUnitJumpstart"
+  # Directory where `mix ex_unit_jumpstart.generate` stores output files,
+  @output_dir "test"
 
-  # Directory where `mix ExUnitJumpstart.init` copies templates in user project
+  # Directory where `mix ex_unit_jumpstart.init` copies templates in user project
   @template_dir "rel/templates/ExUnitJumpstart"
 
   @app :ex_unit_jumpstart
@@ -28,7 +27,6 @@ defmodule Mix.Tasks.ExUnitJumpstart do
     # Elixir app name, from mix.exs
     app_name = mix_config[:app]
 
-
     # Name of systemd unit
     service_name = ext_name
 
@@ -40,11 +38,7 @@ defmodule Mix.Tasks.ExUnitJumpstart do
       |> Enum.map(&String.capitalize/1)
       |> Enum.join("")
 
-    base_dir = user_config[:base_dir] || "/srv"
-
     build_path = Mix.Project.build_path()
-
-    {{cur_user, _cur_uid}, {cur_group, _cur_gid}, _} = MixExUnitJumpstart.User.get_id()
 
     defaults = [
       # Elixir application name
@@ -53,18 +47,8 @@ defmodule Mix.Tasks.ExUnitJumpstart do
       # Elixir module name in camel case
       module_name: module_name,
 
-
-
       # Config keys which have variable expansion
-      expand_keys: [
-        :env_files,
-        :env_vars,
-        :runtime_environment_service_script,
-        :conform_conf_path,
-        :pid_file,
-        :root_directory,
-        :bin_dir
-      ],
+      expand_keys: [],
 
       # Add your keys here
       expand_keys_extra: []
@@ -73,12 +57,11 @@ defmodule Mix.Tasks.ExUnitJumpstart do
     # Override values from user config
     cfg = Keyword.merge(defaults, user_config)
 
-    # Calcualate values from other things
+    # Calculate values from other things
     cfg =
       Keyword.merge(
         [
-          releases_dir: cfg[:releases_dir] || Path.join(cfg[:ExUnitJumpstart_dir], "releases"),
-
+          releases_dir: cfg[:releases_dir] || Path.join(cfg[:ExUnitJumpstart_dir], "releases")
         ],
         cfg
       )
@@ -144,7 +127,7 @@ defmodule Mix.Tasks.ExUnitJumpstart.Init do
   ## Usage
 
       # Copy default templates into your project
-      mix ExUnitJumpstart.init
+      mix ex_unit_jumpstart.init
   """
   @shortdoc "Initialize template files"
   use Mix.Task
@@ -170,7 +153,7 @@ defmodule Mix.Tasks.ExUnitJumpstart.Generate do
   ## Usage
 
       # Create scripts and files
-      MIX_ENV=prod mix ExUnitJumpstart.generate
+      mix ex_unit_jumpstart.generate
   """
   @shortdoc "Create ExUnitJumpstart scripts and files"
   use Mix.Task
@@ -181,23 +164,9 @@ defmodule Mix.Tasks.ExUnitJumpstart.Generate do
   def run(args) do
     cfg = Mix.Tasks.ExUnitJumpstart.parse_args(args)
 
-
-
     files =
       cfg[:copy_files] ++
-        [
-          %{
-            src: ["_build/", :mix_env, "/systemd/lib/systemd/system/*"],
-            dst: "/lib/systemd/system/",
-            mode: "600"
-          },
-          %{
-            enabled: cfg[:sudo_ExUnitJumpstart] or cfg[:sudo_app],
-            src: ["_build/", :mix_env, "/ExUnitJumpstart/etc/sudoers.d/", :target_prefix, :ext_name],
-            dst: ["/etc/sudoers.d/", :ext_name],
-            mode: "600"
-          }
-        ]
+        []
 
     files =
       for file <- files, file[:enabled] != false do
@@ -213,7 +182,7 @@ defmodule Mix.Tasks.ExUnitJumpstart.Generate do
         %{dir | path: Mix.Tasks.ExUnitJumpstart.expand_vars(dir.path, cfg)}
       end
 
-    vars = Keyword.merge(cfg, [create_dirs: dirs, copy_files: files])
+    vars = Keyword.merge(cfg, create_dirs: dirs, copy_files: files)
 
     for template <- cfg[:templates], do: write_template(vars, cfg[:bin_dir], template)
 
@@ -237,5 +206,4 @@ defmodule Mix.Tasks.ExUnitJumpstart.Generate do
     # Mix.shell.info "Generating #{target_file} from template #{template}"
     Templates.write_template(cfg, dest_dir, template, output_file)
   end
-
 end
