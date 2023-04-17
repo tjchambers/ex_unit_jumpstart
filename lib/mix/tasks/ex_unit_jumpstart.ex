@@ -1,11 +1,8 @@
 defmodule Mix.Tasks.ExUnitJumpstart do
   @moduledoc false
 
-  # Directory where `mix ex_unit_jumpstart.generate` stores output files,
-  @output_dir "test"
-
   # Directory where `mix ex_unit_jumpstart.init` copies templates in user project
-  @template_dir "rel/templates/ExUnitJumpstart"
+  @template_dir "rel/templates/template_dir"
 
   @app :ex_unit_jumpstart
 
@@ -27,31 +24,9 @@ defmodule Mix.Tasks.ExUnitJumpstart do
     # Elixir app name, from mix.exs
     app_name = mix_config[:app]
 
-    # Name of systemd unit
-    service_name = ext_name
-
-    # Elixir camel case module name version of snake case app name
-    module_name =
-      app_name
-      |> to_string
-      |> String.split("_")
-      |> Enum.map(&String.capitalize/1)
-      |> Enum.join("")
-
-    build_path = Mix.Project.build_path()
-
     defaults = [
-      # Elixir application name
-      app_name: app_name,
-
-      # Elixir module name in camel case
-      module_name: module_name,
-
-      # Config keys which have variable expansion
-      expand_keys: [],
-
-      # Add your keys here
-      expand_keys_extra: []
+      test_dir: "test",
+      code_dir: "lib"
     ]
 
     # Override values from user config
@@ -61,16 +36,11 @@ defmodule Mix.Tasks.ExUnitJumpstart do
     cfg =
       Keyword.merge(
         [
-          releases_dir: cfg[:releases_dir] || Path.join(cfg[:ExUnitJumpstart_dir], "releases")
+          test_dir: cfg[:test_dir],
+          code_dir: cfg[:code_dir]
         ],
         cfg
       )
-
-    # for {key, value} <- cfg do
-    #   Mix.shell.info "cfg: #{key} #{inspect value}"
-    # end
-
-    expand_keys(cfg, cfg[:expand_keys] ++ cfg[:expand_keys_extra])
   end
 
   # Expand cfg vars in keys
@@ -122,7 +92,7 @@ defmodule Mix.Tasks.ExUnitJumpstart.Init do
 
   ## Command line options
 
-    * `--template_dir` - target directory
+    * `--test_dir` - target directory
 
   ## Usage
 
@@ -164,15 +134,14 @@ defmodule Mix.Tasks.ExUnitJumpstart.Generate do
   def run(args) do
     cfg = Mix.Tasks.ExUnitJumpstart.parse_args(args)
 
-    code_files = ExUnitJumpstart.GetCodeFiles.retrieve_code_files(cfg)
-    test_files = ExUnitJumpstart.GetTestFiles.retrieve_test_files(cfg)
+    code_files = ExUnitJumpstart.GetCodeFiles.get_code_files(cfg)
+    test_files = ExUnitJumpstart.GetTestFiles.get_test_files(cfg)
 
-    ExUnitJumpstart.CreateDirs.create_test_dirs(cfg, code_files)
     ExUnitJumpstart.MoveFiles.move_misplaced_test_files(cfg, code_files, test_files)
     ExUnitJumpstart.CreateFiles.create_missing_test_files(cfg, code_files, test_files)
 
     # refetch test files after moving and creating
-    test_files = ExUnitJumpstart.GetTestFiles.retrieve_test_files(cfg)
+    test_files = ExUnitJumpstart.GetTestFiles.get_test_files(cfg)
 
     ExUnitJumpstart.UnitTestGenerator.create_unit_tests(cfg, code_files, test_files)
   end

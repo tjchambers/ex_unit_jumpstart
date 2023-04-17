@@ -18,7 +18,7 @@ defmodule ExUnitJumpstart.MixProject do
         plt_add_apps: [:mix, :eex],
         # plt_add_deps: true,
         # flags: ["-Werror_handling", "-Wrace_conditions"],
-        flags: ["-Wunmatched_returns", :error_handling, :race_conditions, :underspecs],
+        flags: ["-Wunmatched_returns", :error_handling, :race_conditions, :underspecs]
         # ignore_warnings: "dialyzer.ignore-warnings"
       ]
     ]
@@ -35,7 +35,7 @@ defmodule ExUnitJumpstart.MixProject do
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -52,7 +52,7 @@ defmodule ExUnitJumpstart.MixProject do
     [
       extras: [
         "CHANGELOG.md": [],
-        "LICENSE": [title: "License"],
+        LICENSE: [title: "License"],
         "README.md": [title: "Overview"]
       ],
       main: "readme",

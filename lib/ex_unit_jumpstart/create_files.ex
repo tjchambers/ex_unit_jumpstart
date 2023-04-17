@@ -1,5 +1,9 @@
 defmodule ExUnitJumpstart.CreateFiles do
-  def create_files(config, code_files, test_files) do
+  @moduledoc """
+  Creates test files for code files that don't have a test file.
+  """
+
+  def create_missing_test_files(config, code_files, test_files) do
     code_files
     |> Enum.map(fn code_file ->
       test_file = test_files |> Enum.find(fn test_file -> test_file.hash == code_file.hash end)
@@ -19,21 +23,23 @@ defmodule ExUnitJumpstart.CreateFiles do
   end
 
   def gen_test_file_skeleton(config, code_file) do
-    test_file = %{
+    %{
       path: Path.join(config[:test_dir], code_file.path),
       content: content(code_file)
     }
-
-    test_file
   end
 
   def content(code_file) do
-    """
-    defmodule #{code_file.module}Test do
-      use ExUnit.Case, async: true
+    code_file.modules
+    |> Enum.map(fn module ->
+      """
+      defmodule #{module}Test do
+        use ExUnit.Case, async: true
 
-      
-    end
-    """
+      end
+
+      """
+    end)
+    |> Enum.join("\n")
   end
 end
