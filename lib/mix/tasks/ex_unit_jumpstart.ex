@@ -1,9 +1,6 @@
 defmodule Mix.Tasks.ExUnitJumpstart do
   @moduledoc false
 
-  # Directory where `mix ex_unit_jumpstart.init` copies templates in user project
-  @template_dir "rel/templates/template_dir"
-
   @app :ex_unit_jumpstart
 
   @doc "Generate cfg from mix.exs and app config"
@@ -21,9 +18,6 @@ defmodule Mix.Tasks.ExUnitJumpstart do
   @doc "Generate cfg based on params"
   @spec create_config(Keyword.t(), Keyword.t()) :: Keyword.t()
   def create_config(mix_config, user_config) do
-    # Elixir app name, from mix.exs
-    app_name = mix_config[:app]
-
     defaults = [
       test_dir: "test",
       code_dir: "lib"
@@ -33,14 +27,14 @@ defmodule Mix.Tasks.ExUnitJumpstart do
     cfg = Keyword.merge(defaults, user_config)
 
     # Calculate values from other things
-    cfg =
-      Keyword.merge(
-        [
-          test_dir: cfg[:test_dir],
-          code_dir: cfg[:code_dir]
-        ],
-        cfg
-      )
+
+    Keyword.merge(
+      [
+        test_dir: cfg[:test_dir],
+        code_dir: cfg[:code_dir]
+      ],
+      cfg
+    )
   end
 
   # Expand cfg vars in keys

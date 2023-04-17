@@ -19,12 +19,13 @@ defmodule ExUnitJumpstart.CreateFiles do
   def create_test_file(config, code_file) do
     test_file = gen_test_file_skeleton(config, code_file)
 
+    File.mkdir_p!(Path.dirname(test_file.path))
     File.write!(test_file.path, test_file.content)
   end
 
   def gen_test_file_skeleton(config, code_file) do
     %{
-      path: Path.join(config[:test_dir], code_file.path),
+      path: Path.join(config[:test_dir], code_file.path) |> String.replace(".ex", "_test.exs"),
       content: content(code_file)
     }
   end

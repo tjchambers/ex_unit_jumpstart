@@ -1,5 +1,5 @@
 defmodule ExUnitJumpstart.GetCodeFilesTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   test "get_code_files/1" do
     mix_config = Mix.Project.config()
