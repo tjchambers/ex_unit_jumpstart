@@ -1,0 +1,42 @@
+name: Run CI Tests
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  Git-Info:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get Branch Name
+        id: branch_name
+        run: |
+          echo "branch_name=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
+      - name: Get Commit Message
+        id: commit_message
+        run: |
+          echo "commit_message=$(git log --format=%B -n 1 --abbrev-commit HEAD --pretty=oneline)" >> $GITHUB_OUTPUT
+
+    outputs:
+      branch_name: ${{ steps.branch_name.outputs.branch_name }}
+      commit_message: ${{ steps.commit_message.outputs.commit_message }}
+
+  test:
+    runs-on: ubuntu-22.04
+    needs: [Git-Info]
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: run tests
+      run: mix test
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        MIX_ENV: test
+
