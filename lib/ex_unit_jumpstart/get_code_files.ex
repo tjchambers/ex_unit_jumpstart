@@ -13,7 +13,14 @@ defmodule ExUnitJumpstart.GetCodeFiles do
   end
 
   defp modules(path) do
-    Code.compile_file(path)
-    |> Enum.map(fn {module, _binary} -> module end)
+    result = Code.require_file(path)
+    result = case result do
+      nil ->
+        Code.compile_file(path)
+
+        _-> result
+    end
+
+    result |> Enum.map(fn {module, _binary} -> module end)
   end
 end

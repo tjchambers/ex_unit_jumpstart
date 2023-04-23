@@ -20,7 +20,8 @@ defmodule Mix.Tasks.ExUnitJumpstart do
   def create_config(mix_config, user_config) do
     defaults = [
       test_dir: "test",
-      code_dir: "lib"
+      code_dir: "lib",
+      template_dir: "priv/templates"
     ]
 
     # Override values from user config
@@ -105,6 +106,7 @@ defmodule Mix.Tasks.ExUnitJumpstart.Init do
     template_dir = cfg[:template_dir]
     app_dir = Application.app_dir(@app, ["priv", "templates"])
 
+    IO.puts("Copying templates to #{template_dir}")
     :ok = File.mkdir_p(template_dir)
     {:ok, _files} = File.cp_r(app_dir, template_dir)
   end
@@ -139,13 +141,13 @@ defmodule Mix.Tasks.ExUnitJumpstart.Generate do
     ExUnitJumpstart.UnitTestGenerator.create_unit_tests(cfg, code_files, test_files)
   end
 
-  defp write_template(cfg, dest_dir, template),
-    do: write_template(cfg, dest_dir, template, template)
+  # defp write_template(cfg, dest_dir, template),
+  #   do: write_template(cfg, dest_dir, template, template)
 
-  defp write_template(cfg, dest_dir, template, file) do
-    output_file = cfg[:target_prefix] <> file
-    # target_file = Path.join(dest_dir, output_file)
-    # Mix.shell.info "Generating #{target_file} from template #{template}"
-    Templates.write_template(cfg, dest_dir, template, output_file)
-  end
+  # defp write_template(cfg, dest_dir, template, file) do
+  #   output_file = cfg[:target_prefix] <> file
+  #   # target_file = Path.join(dest_dir, output_file)
+  #   # Mix.shell.info "Generating #{target_file} from template #{template}"
+  #   Templates.write_template(cfg, dest_dir, template, output_file)
+  # end
 end

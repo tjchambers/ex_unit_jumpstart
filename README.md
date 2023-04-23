@@ -1,5 +1,7 @@
 # ex_unit_jumpstart
 
+# WORK IN PROGRESS - Do Not Use
+
 This module generates ExUnit style unit test skeletons for an Elixir Project.
 
 - Generates test files with appropriate jumpstart headers for each module.
@@ -15,7 +17,7 @@ Add `ex_unit_jumpstart` to the list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ex_unit_jumpstart, "~> 0.0.1"},
+    {:ex_unit_jumpstart, "~> 0.0.2"},
   ]
 end
 ```
