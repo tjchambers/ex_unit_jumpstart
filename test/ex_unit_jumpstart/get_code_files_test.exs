@@ -13,6 +13,6 @@ defmodule ExUnitJumpstart.GetCodeFilesTest do
     assert length(code_files) == 9
     assert last.path == "mix/tasks/ex_unit_jumpstart.ex"
     assert length(last.modules) == 3
-    assert last.modules |> List.last() == Mix.Tasks.ExUnitJumpstart.Generate
+    assert last.modules |> List.last() == "Mix.Tasks.ExUnitJumpstart.Generate"
   end
 end
