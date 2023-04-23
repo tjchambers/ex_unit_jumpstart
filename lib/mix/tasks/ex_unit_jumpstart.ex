@@ -112,11 +112,10 @@ end
 
 defmodule Mix.Tasks.ExUnitJumpstart.Generate do
   @moduledoc """
-  Create ExUnitJumpstart scripts and files for project.
+  Create ExUnitJumpstart test files and update existing ones.
 
   ## Usage
 
-      # Create scripts and files
       mix ex_unit_jumpstart.generate
   """
   @shortdoc "Create ExUnitJumpstart scripts and files"

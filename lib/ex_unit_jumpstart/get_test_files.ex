@@ -9,7 +9,7 @@ defmodule ExUnitJumpstart.GetTestFiles do
     end)
   end
 
-  def modules(path) do
+  defp modules(path) do
     Code.compile_file(path)
     |> Enum.map(fn {module, _binary} -> module end)
   end
