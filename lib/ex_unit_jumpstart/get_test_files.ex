@@ -1,8 +1,10 @@
 defmodule ExUnitJumpstart.GetTestFiles do
   def get_test_files(config) do
-    Path.wildcard("#{config[:test_dir]}/**/*.exs")
+     paths = Path.wildcard("#{config[:test_dir]}/**/*.exs")
+
+    paths
     |> Enum.map(fn path ->
-      %ExUnitJumpstart.TestFile{
+       %ExUnitJumpstart.TestFile{
         path: path |> String.replace(config[:test_dir] <> "/", ""),
         modules: modules(path)
       }
@@ -10,14 +12,8 @@ defmodule ExUnitJumpstart.GetTestFiles do
   end
 
   defp modules(path) do
-    result = Code.require_file(path)
-    result = case result do
-      nil ->
-        Code.compile_file(path)
-
-        _-> result
-    end
-
-    result |> Enum.map(fn {module, _binary} -> module end)
+    content = File.read!(path)
+    Regex.scan(~r/defmodule (.*?) do/, content)
+    |> Enum.flat_map(fn [_, y] -> [y] end)
   end
 end

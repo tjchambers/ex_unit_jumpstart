@@ -6,11 +6,11 @@ defmodule ExUnitJumpstart.CreateFiles do
   def create_missing_test_files(config, code_files, test_files) do
     code_files
     |> Enum.map(fn code_file ->
-      test_file = test_files |> Enum.find(fn test_file -> test_file.hash == code_file.hash end)
+      test_file = test_files
+      |> Enum.find(fn test_file -> String.replace(test_file.path, "_test.exs", ".ex") == code_file.path end)
 
-      if test_file do
-        IO.puts("Test file already exists for #{code_file}")
-      else
+      unless test_file do
+        IO.puts("Creating test file for #{code_file.path}")
         create_test_file(config, code_file)
       end
     end)

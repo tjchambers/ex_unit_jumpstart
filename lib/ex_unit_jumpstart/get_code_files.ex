@@ -3,24 +3,20 @@ defmodule ExUnitJumpstart.GetCodeFiles do
   Get a list of code files and their modules.
   """
   def get_code_files(config) do
-    Path.wildcard("#{config[:code_dir]}/**/*.ex")
+    paths = Path.wildcard("#{config[:code_dir]}/**/*.ex")
+
+    paths
     |> Enum.map(fn path ->
-      %ExUnitJumpstart.CodeFile{
+       %ExUnitJumpstart.CodeFile{
         path: path |> String.replace(config[:code_dir] <> "/", ""),
         modules: modules(path)
       }
     end)
   end
 
-  defp modules(path) do
-    result = Code.require_file(path)
-    result = case result do
-      nil ->
-        Code.compile_file(path)
-
-        _-> result
+     defp modules(path) do
+      content = File.read!(path)
+      Regex.scan(~r/defmodule (.*?) do/, content)
+      |> Enum.flat_map(fn [_, y] -> [y] end)
     end
-
-    result |> Enum.map(fn {module, _binary} -> module end)
-  end
-end
+ end

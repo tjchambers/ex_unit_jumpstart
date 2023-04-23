@@ -17,7 +17,7 @@ Add `ex_unit_jumpstart` to the list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ex_unit_jumpstart, "~> 0.0.2"},
+    {:ex_unit_jumpstart, "~> 0.0.3"},
   ]
 end
 ```
@@ -31,13 +31,6 @@ Follow the Phoenix config process for
 ### Initialize `ex_unit_jumpstart` and generate files
 
 `ex_unit_jumpstart` generate output files from templates.
-Run the following to copy the templates into your project. The templating
-process most common needs via configuration, but you can also check them into
-your project and make local modifications to handle special needs.
-
-```shell
-mix ex_unit_jumpstart.init
-```
 
 Generate output files:
 
