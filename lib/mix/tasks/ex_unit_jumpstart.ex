@@ -17,7 +17,7 @@ defmodule Mix.Tasks.ExUnitJumpstart do
 
   @doc "Generate cfg based on params"
   @spec create_config(Keyword.t(), Keyword.t()) :: Keyword.t()
-  def create_config(mix_config, user_config) do
+  def create_config(_mix_config, user_config) do
     defaults = [
       test_dir: "test",
       code_dir: "lib",
@@ -123,7 +123,7 @@ defmodule Mix.Tasks.ExUnitJumpstart.Generate do
   @shortdoc "Create ExUnitJumpstart scripts and files"
   use Mix.Task
 
-  alias MixExUnitJumpstart.Templates
+  # alias MixExUnitJumpstart.Templates
 
   @impl Mix.Task
   def run(args) do
