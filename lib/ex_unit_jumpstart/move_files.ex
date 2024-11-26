@@ -42,7 +42,7 @@ defmodule ExUnitJumpstart.MoveFiles do
 
       IO.puts("Moving #{test_file.path} to #{new_path}")
 
-      unless config.fetch!(:dry_run) do
+      unless Keyword.fetch!(config,:dry_run) do
         File.mkdir_p!(Path.dirname(new_path))
         File.rename!(Path.join(config[:test_dir], test_file.path), new_path)
       end

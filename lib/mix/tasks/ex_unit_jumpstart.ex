@@ -13,7 +13,7 @@ defmodule Mix.Tasks.ExUnitJumpstart do
   @doc "Generate cfg from mix.exs and app config"
   @spec parse_args(OptionParser.argv()) :: Keyword.t()
   def parse_args(argv) do
-    opts = [strict: [version: :string]]
+    opts = [strict: [version: :string, test_dir: :string, code_dir: :string, template_dir: :string, dry_run: :boolean]]
     {overrides, _} = OptionParser.parse!(argv, opts)
 
     user_config = Keyword.merge(Application.get_all_env(@app), overrides)

@@ -12,7 +12,7 @@ defmodule ExUnitJumpstart.CreateFiles do
           String.replace(test_file.path, "_test.exs", ".ex") == code_file.path
         end)
 
-      unless test_file or config.fetch!(:dry_run) do
+      unless is_nil(test_file) or Keyword.fetch!(config,:dry_run) do
         IO.puts("Creating test file for #{code_file.path}")
         create_test_file(config, code_file)
       end
