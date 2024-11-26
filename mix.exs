@@ -2,7 +2,7 @@ defmodule ExUnitJumpstart.MixProject do
   use Mix.Project
 
   @github "https://github.com/tjchambers/ex_unit_jumpstart"
-  @version "0.0.3"
+  @version "0.0.4"
 
   def project do
     [
